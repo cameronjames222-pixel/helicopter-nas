@@ -44,6 +44,25 @@
             background: #334155;
             border-radius: 3px;
         }
+        
+        /* Active Recall Quiz Mode Styles */
+        .quiz-overlay {
+            display: none !important;
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        body.quiz-mode-active .quiz-overlay {
+            display: flex !important;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        body.quiz-mode-active .quiz-revealed .quiz-overlay {
+            display: none !important;
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen p-4 md:p-8">
@@ -169,7 +188,7 @@
                         THE U.S. NATIONAL AIRSPACE SYSTEM (NAS)
                     </h1>
                     <h2 class="text-lg md:text-xl font-bold text-blue-400 mt-1 flex items-center gap-2">
-                        <span>HELICOPTER PILOT EDITION</span>
+                        <span>HELICOPTER PILED EDITION</span>
                         <span class="text-xs bg-blue-500/20 text-blue-300 font-mono font-medium px-2 py-0.5 rounded">VFR Cloud Clearances & Entry Requirements</span>
                     </h2>
                     <p class="text-slate-400 text-sm mt-2 max-w-3xl leading-relaxed">
@@ -348,111 +367,143 @@
             
             <!-- CLASS A -->
             <div id="class-a-card" class="bg-slate-900 border-l-4 border-l-airspace-classA border-y border-r border-slate-800 rounded-r-xl p-5 hover:translate-y-[-2px] hover:shadow-[0_0_25px_rgba(239,68,68,0.15)] hover:border-red-500/80 transition duration-300 flex flex-col justify-between cursor-pointer" onclick="toggleCardDeepDive('class-a-card', event)">
-                <div>
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                        <h4 class="text-lg font-extrabold text-red-500">CLASS A</h4>
-                        <span class="text-xs bg-red-500/10 border border-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono">IFR Exclusive</span>
-                    </div>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">18,000' MSL up to & including FL 600</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-slate-200">ATC Clearance Required</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Instrument-Rated (Private/Commercial)</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">Mode C/S Transponder, Two-way Radio, ADS-B Out</strong></li>
-                    </ul>
+                <!-- Card Header (Always Visible) -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                    <h4 class="text-lg font-extrabold text-red-500">CLASS A</h4>
+                    <span class="text-xs bg-red-500/10 border border-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono">IFR Exclusive</span>
                 </div>
-                <div class="mt-6">
-                    <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
-                        <span class="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider mb-1">VFR Weather Minimums</span>
-                        <span class="text-red-400 font-bold text-sm block">VFR Not Applicable / IFR Only</span>
+                
+                <!-- Card Content Wrapper (Quiz target) -->
+                <div class="relative flex-1 flex flex-col justify-between">
+                    <!-- Quiz Active Overlay (Targeted blur) -->
+                    <div onclick="revealCard('class-a-card', event)" class="quiz-overlay absolute inset-0 bg-slate-900/98 flex flex-col items-center justify-center z-30 transition-all duration-300 rounded-lg">
+                        <span class="text-amber-500 text-xl mb-1.5 animate-bounce">❓</span>
+                        <span class="text-[10px] font-bold text-slate-300 font-mono tracking-widest uppercase">TAP TO REVEAL</span>
                     </div>
-                    
-                    <!-- Expandable Drawer -->
-                    <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-a-card">
-                        <div class="min-h-0">
-                            <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
-                                <h5 class="text-xs font-bold text-red-400 uppercase tracking-wider">Class A Deep Dive:</h5>
-                                <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
-                                    <li><strong class="text-slate-100">Altimeter Setting:</strong> Must set altimeter to 29.92 Hg upon entering.</li>
-                                    <li><strong class="text-slate-100">Flight Rules:</strong> 1000% IFR only. No VFR flight or VFR-on-top allowed.</li>
-                                    <li><strong class="text-slate-100">Speed Limit:</strong> Mach 1.0 maximum unless explicitly authorized.</li>
-                                </ul>
-                                <button onclick="toggleCardDeepDive('class-a-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
-                                    Close <span class="text-red-400 font-bold">✕</span>
-                                </button>
+
+                    <div>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">18,000' MSL up to & including FL 600</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-slate-200">ATC Clearance Required</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Instrument-Rated (Private/Commercial)</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">Mode C/S Transponder, Two-way Radio, ADS-B Out</strong></li>
+                        </ul>
+                    </div>
+                    <div class="mt-6">
+                        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                            <span class="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider mb-1">VFR Weather Minimums</span>
+                            <span class="text-red-400 font-bold text-sm block">VFR Not Applicable / IFR Only</span>
+                        </div>
+                        
+                        <!-- Expandable Drawer -->
+                        <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-a-card">
+                            <div class="min-h-0">
+                                <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
+                                    <h5 class="text-xs font-bold text-red-400 uppercase tracking-wider">Class A Deep Dive:</h5>
+                                    <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
+                                        <li><strong class="text-slate-100">Altimeter Setting:</strong> Must set altimeter to 29.92 Hg upon entering.</li>
+                                        <li><strong class="text-slate-100">Flight Rules:</strong> 1000% IFR only. No VFR flight or VFR-on-top allowed.</li>
+                                        <li><strong class="text-slate-100">Speed Limit:</strong> Mach 1.0 maximum unless explicitly authorized.</li>
+                                    </ul>
+                                    <button onclick="toggleCardDeepDive('class-a-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
+                                        Close <span class="text-red-400 font-bold">✕</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                        
+                        <!-- Action Button Trigger -->
+                        <button class="w-full mt-4 py-2 px-3 bg-red-950/25 hover:bg-red-900/35 border border-red-900/40 text-red-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
+                            <span id="label-class-a-card">View Deep Dive</span>
+                            <span class="transform transition-transform duration-300" id="chevron-class-a-card">▼</span>
+                        </button>
                     </div>
-                    
-                    <!-- Action Button Trigger -->
-                    <button class="w-full mt-4 py-2 px-3 bg-red-950/25 hover:bg-red-900/35 border border-red-900/40 text-red-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
-                        <span id="label-class-a-card">View Deep Dive</span>
-                        <span class="transform transition-transform duration-300" id="chevron-class-a-card">▼</span>
-                    </button>
                 </div>
             </div>
 
             <!-- CLASS B -->
             <div id="class-b-card" class="bg-slate-900 border-l-4 border-l-airspace-classB border-y border-r border-slate-800 rounded-r-xl p-5 hover:translate-y-[-2px] hover:shadow-[0_0_25px_rgba(37,99,235,0.18)] hover:border-blue-500/80 transition duration-300 flex flex-col justify-between cursor-pointer" onclick="toggleCardDeepDive('class-b-card', event)">
-                <div>
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                        <h4 class="text-lg font-extrabold text-blue-500">CLASS B</h4>
-                        <span class="text-xs bg-blue-500/10 border border-blue-500/20 text-blue-400 px-2 py-0.5 rounded font-mono">"Bravo Big"</span>
-                    </div>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">SFC to tailored altitude (typically 10,000' MSL)</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-blue-400 font-extrabold">Explicit ATC Clearance Required <br><span class="text-xs text-slate-400 font-normal">("Cleared to enter Class Bravo")</span></strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Private Pilot (or Student with specific endorsement, <span class="text-red-400">EXCEPT</span> at restricted primary airports under App D)</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">Two-way Radio, Mode C/S Transponder with ADS-B Out</strong></li>
-                    </ul>
+                <!-- Card Header (Always Visible) -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                    <h4 class="text-lg font-extrabold text-blue-500">CLASS B</h4>
+                    <span class="text-xs bg-blue-500/10 border border-blue-500/20 text-blue-400 px-2 py-0.5 rounded font-mono">"Bravo Big"</span>
                 </div>
-                <div class="mt-6">
-                    <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
-                        <span class="text-blue-400 font-bold text-sm block">3 SM Visibility, Clear of Clouds</span>
+                
+                <!-- Card Content Wrapper (Quiz target) -->
+                <div class="relative flex-1 flex flex-col justify-between">
+                    <!-- Quiz Active Overlay (Targeted blur) -->
+                    <div onclick="revealCard('class-b-card', event)" class="quiz-overlay absolute inset-0 bg-slate-900/98 flex flex-col items-center justify-center z-30 transition-all duration-300 rounded-lg">
+                        <span class="text-amber-500 text-xl mb-1.5 animate-bounce">❓</span>
+                        <span class="text-[10px] font-bold text-slate-300 font-mono tracking-widest uppercase">TAP TO REVEAL</span>
                     </div>
 
-                    <!-- Expandable Drawer -->
-                    <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-b-card">
-                        <div class="min-h-0">
-                            <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
-                                <h5 class="text-xs font-bold text-blue-400 uppercase tracking-wider">Class B Deep Dive:</h5>
-                                <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
-                                    <li><strong class="text-slate-100">The Magic Phrase:</strong> You cannot enter until ATC explicitly says your tail number and "Cleared to enter Class Bravo." Hearing "Radar contact" is NOT an entry clearance.</li>
-                                    <li><strong class="text-slate-100">Airspeed Limits:</strong> 250 knots max inside the Bravo. Crucially for helicopters, 200 knots max in the airspace underlying the Class B shelf or in a VFR corridor.</li>
-                                    <li><strong class="text-slate-100">Local Restriction:</strong> Student pilot takeoffs/landings are completely banned at primary Appendix D airports (e.g., KIAD, KJFK, KMCO, KLAX).</li>
-                                </ul>
-                                <button onclick="toggleCardDeepDive('class-b-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
-                                    Close <span class="text-blue-400 font-bold">✕</span>
-                                </button>
+                    <div>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">SFC to tailored altitude (typically 10,000' MSL)</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-blue-400 font-extrabold">Explicit ATC Clearance Required <br><span class="text-xs text-slate-400 font-normal">(e.g., "Cleared to enter Class Bravo")</span></strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Private Pilot (or Student with specific endorsement, <span class="text-red-400">EXCEPT</span> at restricted primary airports under App D)</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">Two-way Radio, Mode C/S Transponder with ADS-B Out</strong></li>
+                        </ul>
+                    </div>
+                    <div class="mt-6">
+                        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                            <span class="text-blue-400 font-bold text-sm block">3 SM Visibility, Clear of Clouds</span>
+                        </div>
+
+                        <!-- Expandable Drawer -->
+                        <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-b-card">
+                            <div class="min-h-0">
+                                <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
+                                    <h5 class="text-xs font-bold text-blue-400 uppercase tracking-wider">Class B Deep Dive:</h5>
+                                    <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
+                                        <li><strong class="text-slate-100">The Magic Phrase:</strong> You cannot enter until ATC explicitly says your tail number and "Cleared to enter Class Bravo." Hearing "Radar contact" is NOT an entry clearance.</li>
+                                        <li><strong class="text-slate-100">Airspeed Limits:</strong> 250 knots max inside the Bravo. Crucially for helicopters, 200 knots max in the airspace underlying the Class B shelf or in a VFR corridor.</li>
+                                        <li><strong class="text-slate-100">Local Restriction:</strong> Student pilot takeoffs/landings are completely banned at primary Appendix D airports (e.g., KIAD, KJFK, KMCO, KLAX).</li>
+                                    </ul>
+                                    <button onclick="toggleCardDeepDive('class-b-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
+                                        Close <span class="text-blue-400 font-bold">✕</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Action Button Trigger -->
-                    <button class="w-full mt-4 py-2 px-3 bg-blue-950/25 hover:bg-blue-900/35 border border-blue-900/40 text-blue-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
-                        <span id="label-class-b-card">View Deep Dive</span>
-                        <span class="transform transition-transform duration-300" id="chevron-class-b-card">▼</span>
-                    </button>
+                        <!-- Action Button Trigger -->
+                        <button class="w-full mt-4 py-2 px-3 bg-blue-950/25 hover:bg-blue-900/35 border border-blue-900/40 text-blue-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
+                            <span id="label-class-b-card">View Deep Dive</span>
+                            <span class="transform transition-transform duration-300" id="chevron-class-b-card">▼</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- CLASS C -->
             <div id="class-c-card" class="bg-slate-900 border-l-4 border-l-airspace-classC border-y border-r border-slate-800 rounded-r-xl p-5 hover:translate-y-[-2px] hover:shadow-[0_0_25px_rgba(219,39,119,0.18)] hover:border-pink-500/80 transition duration-300 flex flex-col justify-between cursor-pointer" onclick="toggleCardDeepDive('class-c-card', event)">
-                <div>
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                        <h4 class="text-lg font-extrabold text-pink-500">CLASS C</h4>
-                        <span class="text-xs bg-pink-500/10 border border-pink-500/20 text-pink-400 px-2 py-0.5 rounded font-mono">"Crowded Cities"</span>
-                    </div>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">SFC to 4,000' AGL (Core: 5 NM SFC-4k; Shelf: 10 NM 1,200'-4,000' AGL)</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-pink-400 font-extrabold">Establish Two-way Radio Comm <br><span class="text-xs text-slate-400 font-normal">(ATC responds using your tail number)</span></strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Student Pilot Certificate minimum</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">Two-way Radio, Mode C/S Transponder with ADS-B Out</strong></li>
-                    </ul>
+                <!-- Card Header (Always Visible) -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                    <h4 class="text-lg font-extrabold text-pink-500">CLASS C</h4>
+                    <span class="text-xs bg-pink-500/10 border border-pink-500/20 text-pink-400 px-2 py-0.5 rounded font-mono">"Crowded Cities"</span>
                 </div>
-                <div class="mt-6">
-                    <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
-                        <span class="text-pink-400 font-bold text-sm block">3 SM Visibility, 3-152 (500' below, 1000' above, 2000' horizontal)</span>
+                
+                <!-- Card Content Wrapper (Quiz target) -->
+                <div class="relative flex-1 flex flex-col justify-between">
+                    <!-- Quiz Active Overlay (Targeted blur) -->
+                    <div onclick="revealCard('class-c-card', event)" class="quiz-overlay absolute inset-0 bg-slate-900/98 flex flex-col items-center justify-center z-30 transition-all duration-300 rounded-lg">
+                        <span class="text-amber-500 text-xl mb-1.5 animate-bounce">❓</span>
+                        <span class="text-[10px] font-bold text-slate-300 font-mono tracking-widest uppercase">TAP TO REVEAL</span>
                     </div>
+
+                    <div>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">SFC to 4,000' AGL (Core: 5 NM SFC-4k; Shelf: 10 NM 1,200'-4,000' AGL)</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-pink-400 font-extrabold">Establish Two-way Radio Comm <br><span class="text-xs text-slate-400 font-normal">(ATC responds using your tail number)</span></strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Student Pilot Certificate minimum</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">Two-way Radio, Mode C/S Transponder with ADS-B Out</strong></li>
+                        </ul>
+                    </div>
+                    <div class="mt-6">
+                        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                            <span class="text-pink-400 font-bold text-sm block">3 SM Visibility, 3-152 (500' below, 1000' above, 2000' horizontal)</span>
+                        </div>
 
                     <!-- Expandable Drawer -->
                     <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-c-card">
@@ -478,168 +529,202 @@
                     </button>
                 </div>
             </div>
+        </div>
 
             <!-- CLASS D -->
             <div id="class-d-card" class="bg-slate-900 border-l-4 border-l-airspace-classD border-y border-r border-slate-800 rounded-r-xl p-5 hover:translate-y-[-2px] hover:shadow-[0_0_25px_rgba(13,148,136,0.18)] hover:border-teal-500/80 transition duration-300 flex flex-col justify-between cursor-pointer" onclick="toggleCardDeepDive('class-d-card', event)">
-                <div>
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                        <h4 class="text-lg font-extrabold text-teal-500">CLASS D</h4>
-                        <span class="text-xs bg-teal-500/10 border border-teal-500/20 text-teal-400 px-2 py-0.5 rounded font-mono">"Dialogue"</span>
-                    </div>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">SFC to 2,500' AGL (Tailored lateral dimensions)</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-teal-400 font-extrabold">Establish Two-way Radio Comm <br><span class="text-xs text-slate-400 font-normal">(ATC must acknowledge you specifically)</span></strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Student Pilot Certificate minimum</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">Two-way Radio</strong></li>
-                    </ul>
+                <!-- Card Header (Always Visible) -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                    <h4 class="text-lg font-extrabold text-teal-500">CLASS D</h4>
+                    <span class="text-xs bg-teal-500/10 border border-teal-500/20 text-teal-400 px-2 py-0.5 rounded font-mono">"Dialogue"</span>
                 </div>
-                <div class="mt-6">
-                    <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
-                        <span class="text-teal-400 font-bold text-sm block">3 SM Visibility, 3-152 (500' below, 1000' above, 2000' horizontal)</span>
+                
+                <!-- Card Content Wrapper (Quiz target) -->
+                <div class="relative flex-1 flex flex-col justify-between">
+                    <!-- Quiz Active Overlay (Targeted blur) -->
+                    <div onclick="revealCard('class-d-card', event)" class="quiz-overlay absolute inset-0 bg-slate-900/98 flex flex-col items-center justify-center z-30 transition-all duration-300 rounded-lg">
+                        <span class="text-amber-500 text-xl mb-1.5 animate-bounce">❓</span>
+                        <span class="text-[10px] font-bold text-slate-300 font-mono tracking-widest uppercase">TAP TO REVEAL</span>
                     </div>
 
-                    <!-- Expandable Drawer -->
-                    <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-d-card">
-                        <div class="min-h-0">
-                            <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
-                                <h5 class="text-xs font-bold text-teal-400 uppercase tracking-wider">Class D Deep Dive:</h5>
-                                <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
-                                    <li><strong class="text-slate-100">Two-Way Contact Rule:</strong> Same as Class C. ATC must acknowledge your specific callsign to legally enter.</li>
-                                    <li><strong class="text-slate-100">Standard Dimensions:</strong> Core extends from surface to 2,500' AGL with a tailored lateral radius (typically 4 to 5 NM).</li>
-                                    <li><strong class="text-slate-100">Satellites & Cutouts:</strong> Look closely at Sectional charts for dashed box cutouts indicating where Class D changes shape or handoffs occur.</li>
-                                    <li><strong class="text-slate-100">Airspeed Limit:</strong> 200 knots maximum at or below 2,500' AGL within 4 NM of the primary airport.</li>
-                                </ul>
-                                <button onclick="toggleCardDeepDive('class-d-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
-                                    Close <span class="text-teal-400 font-bold">✕</span>
-                                </button>
+                    <div>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">SFC to 2,500' AGL (Tailored lateral dimensions)</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-teal-400 font-extrabold">Establish Two-way Radio Comm <br><span class="text-xs text-slate-400 font-normal">(ATC must acknowledge you specifically)</span></strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Student Pilot Certificate minimum</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">Two-way Radio</strong></li>
+                        </ul>
+                    </div>
+                    <div class="mt-6">
+                        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                            <span class="text-teal-400 font-bold text-sm block">3 SM Visibility, 3-152 (500' below, 1000' above, 2000' horizontal)</span>
+                        </div>
+
+                        <!-- Expandable Drawer -->
+                        <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-d-card">
+                            <div class="min-h-0">
+                                <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
+                                    <h5 class="text-xs font-bold text-teal-400 uppercase tracking-wider">Class D Deep Dive:</h5>
+                                    <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
+                                        <li><strong class="text-slate-100">Two-Way Contact Rule:</strong> Same as Class C. ATC must acknowledge your specific callsign to legally enter.</li>
+                                        <li><strong class="text-slate-100">Standard Dimensions:</strong> Core extends from surface to 2,500' AGL with a tailored lateral radius (typically 4 to 5 NM).</li>
+                                        <li><strong class="text-slate-100">Satellites & Cutouts:</strong> Look closely at Sectional charts for dashed box cutouts indicating where Class D changes shape or handoffs occur.</li>
+                                        <li><strong class="text-slate-100">Airspeed Limit:</strong> 200 knots maximum at or below 2,500' AGL within 4 NM of the primary airport.</li>
+                                    </ul>
+                                    <button onclick="toggleCardDeepDive('class-d-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
+                                        Close <span class="text-teal-400 font-bold">✕</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Action Button Trigger -->
-                    <button class="w-full mt-4 py-2 px-3 bg-teal-950/25 hover:bg-teal-900/35 border border-teal-900/40 text-teal-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
-                        <span id="label-class-d-card">View Deep Dive</span>
-                        <span class="transform transition-transform duration-300" id="chevron-class-d-card">▼</span>
-                    </button>
+                        <!-- Action Button Trigger -->
+                        <button class="w-full mt-4 py-2 px-3 bg-teal-950/25 hover:bg-teal-900/35 border border-teal-900/40 text-teal-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
+                            <span id="label-class-d-card">View Deep Dive</span>
+                            <span class="transform transition-transform duration-300" id="chevron-class-d-card">▼</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- CLASS E -->
             <div id="class-e-card" class="bg-slate-900 border-l-4 border-l-airspace-classE border-y border-r border-slate-800 rounded-r-xl p-5 hover:translate-y-[-2px] hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] hover:border-amber-500/80 transition duration-300 flex flex-col justify-between cursor-pointer" onclick="toggleCardDeepDive('class-e-card', event)">
-                <div>
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                        <h4 class="text-lg font-extrabold text-amber-500">CLASS E</h4>
-                        <span class="text-xs bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-mono">"Everywhere Else"</span>
-                    </div>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">Controlled airspace that isn't A, B, C, or D (Typically begins at 1,200' AGL or 700' AGL up to but not including 18,000' MSL)</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-slate-200">No VFR communication requirement</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Student Pilot Certificate minimum</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">No specific VFR requirements below 10,000' MSL. Mode C/S Transponder & ADS-B Out required ≥ 10,000' MSL and > 2,500' AGL</strong></li>
-                    </ul>
+                <!-- Card Header (Always Visible) -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                    <h4 class="text-lg font-extrabold text-amber-500">CLASS E</h4>
+                    <span class="text-xs bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-mono">"Everywhere Else"</span>
                 </div>
-                <div class="mt-6">
-                    <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800 space-y-2">
-                        <div>
-                            <span class="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">VFR Weather (&lt; 10,000' MSL)</span>
-                            <span class="text-amber-400 font-bold text-xs block">3 SM, 3-152 (500' below, 1000' above, 2000' horiz)</span>
-                        </div>
-                        <div class="pt-2 border-t border-slate-800/80">
-                            <span class="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">VFR Weather (≥ 10,000' MSL)</span>
-                            <span class="text-amber-500 font-bold text-xs block">5 SM, 5-111 (1000' below, 1000' above, 1 SM horiz)</span>
-                        </div>
+                
+                <!-- Card Content Wrapper (Quiz target) -->
+                <div class="relative flex-1 flex flex-col justify-between">
+                    <!-- Quiz Active Overlay (Targeted blur) -->
+                    <div onclick="revealCard('class-e-card', event)" class="quiz-overlay absolute inset-0 bg-slate-900/98 flex flex-col items-center justify-center z-30 transition-all duration-300 rounded-lg">
+                        <span class="text-amber-500 text-xl mb-1.5 animate-bounce">❓</span>
+                        <span class="text-[10px] font-bold text-slate-300 font-mono tracking-widest uppercase">TAP TO REVEAL</span>
                     </div>
 
-                    <!-- Expandable Drawer -->
-                    <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-e-card">
-                        <div class="min-h-0">
-                            <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
-                                <h5 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Class E Deep Dive:</h5>
-                                <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
-                                    <li><strong class="text-slate-100">The Floor Variants:</strong> Usually starts at 1,200' AGL (printed as magenta shading zipper lines) or 700' AGL (fuzzy magenta vignette edges surrounding airports with instrument approaches).</li>
-                                    <li><strong class="text-slate-100">VFR Freedom:</strong> No radio communications or clearance required for VFR aircraft.</li>
-                                    <li><strong class="text-slate-100">High Altitude Equipment Shift:</strong> The moment you hit 10,000' MSL, your cloud clearances spike to 5-111, and a Mode C transponder and ADS-B Out become mandatory.</li>
-                                </ul>
-                                <button onclick="toggleCardDeepDive('class-e-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
-                                    Close <span class="text-amber-400 font-bold">✕</span>
-                                </button>
+                    <div>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">Controlled airspace that isn't A, B, C, or D (Typically begins at 1,200' AGL or 700' AGL up to but not including 18,000' MSL)</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-slate-200">No VFR communication requirement</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Minimum Pilot Certificate</span> <strong class="text-slate-200">Student Pilot Certificate minimum</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">No specific VFR requirements below 10,000' MSL. Mode C/S Transponder & ADS-B Out required ≥ 10,000' MSL and > 2,500' AGL</strong></li>
+                        </ul>
+                    </div>
+                    <div class="mt-6">
+                        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800 space-y-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">VFR Weather (&lt; 10,000' MSL)</span>
+                                <span class="text-amber-400 font-bold text-xs block">3 SM, 3-152 (500' below, 1000' above, 2000' horiz)</span>
+                            </div>
+                            <div class="pt-2 border-t border-slate-800/80">
+                                <span class="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">VFR Weather (≥ 10,000' MSL)</span>
+                                <span class="text-amber-500 font-bold text-xs block">5 SM, 5-111 (1000' below, 1000' above, 1 SM horiz)</span>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Action Button Trigger -->
-                    <button class="w-full mt-4 py-2 px-3 bg-amber-950/25 hover:bg-amber-900/35 border border-amber-900/40 text-amber-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
-                        <span id="label-class-e-card">View Deep Dive</span>
-                        <span class="transform transition-transform duration-300" id="chevron-class-e-card">▼</span>
-                    </button>
+                        <!-- Expandable Drawer -->
+                        <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-e-card">
+                            <div class="min-h-0">
+                                <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
+                                    <h5 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Class E Deep Dive:</h5>
+                                    <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
+                                        <li><strong class="text-slate-100">The Floor Variants:</strong> Usually starts at 1,200' AGL (printed as magenta shading zipper lines) or 700' AGL (fuzzy magenta vignette edges surrounding airports with instrument approaches).</li>
+                                        <li><strong class="text-slate-100">VFR Freedom:</strong> No radio communications or clearance required for VFR aircraft.</li>
+                                        <li><strong class="text-slate-100">High Altitude Equipment Shift:</strong> The moment you hit 10,000' MSL, your cloud clearances spike to 5-111, and a Mode C transponder and ADS-B Out become mandatory.</li>
+                                    </ul>
+                                    <button onclick="toggleCardDeepDive('class-e-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
+                                        Close <span class="text-amber-400 font-bold">✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button Trigger -->
+                        <button class="w-full mt-4 py-2 px-3 bg-amber-950/25 hover:bg-amber-900/35 border border-amber-900/40 text-amber-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
+                            <span id="label-class-e-card">View Deep Dive</span>
+                            <span class="transform transition-transform duration-300" id="chevron-class-e-card">▼</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- CLASS G -->
             <div id="class-g-card" class="bg-slate-900 border-l-4 border-l-airspace-classG border-y border-r border-slate-800 rounded-r-xl p-5 hover:translate-y-[-2px] hover:shadow-[0_0_25px_rgba(16,185,129,0.18)] hover:border-emerald-500/80 transition duration-300 flex flex-col justify-between ring-2 ring-emerald-500/20 cursor-pointer" onclick="toggleCardDeepDive('class-g-card', event)">
-                <div>
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                        <h4 class="text-lg font-extrabold text-emerald-500">CLASS G</h4>
-                        <span class="text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono">"Go for It"</span>
-                    </div>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">Surface up to overlying controlled airspace (Class E)</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-slate-200">Uncontrolled Airspace (No ATC contact required)</strong></li>
-                        <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">No specific VFR requirements</strong></li>
-                        <li class="flex flex-col">
-                            <span class="text-xs text-slate-400 font-semibold uppercase">Special Helicopter Exception</span> 
-                            <span class="text-[11px] text-slate-300 mt-1 leading-relaxed bg-emerald-950/20 p-2 rounded border border-emerald-900/30">
-                                <strong class="text-emerald-400">14 CFR 91.155(b)(1):</strong> Helicopters may operate at less than 1/2 SM visibility if flying at a speed that allows adequate opportunity to see and avoid traffic or obstructions.
-                            </span>
-                        </li>
-                    </ul>
+                <!-- Card Header (Always Visible) -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                    <h4 class="text-lg font-extrabold text-emerald-500">CLASS G</h4>
+                    <span class="text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono">"Go for It"</span>
                 </div>
-                <div class="mt-6">
-                    <!-- Helicopter G Limits Checklist -->
-                    <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800 space-y-2 text-[11px]">
-                        <span class="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">Helicopter Weather Minimums Grid</span>
-                        <div class="grid grid-cols-2 gap-2 font-mono text-slate-300">
-                            <div class="border-b border-slate-800/80 pb-1">
-                                <span class="text-slate-400 block text-[9px]">≤ 1,200' AGL (DAY)</span>
-                                <span class="text-emerald-400 font-bold">1/2 SM / Clear of Clouds</span>
-                            </div>
-                            <div class="border-b border-slate-800/80 pb-1">
-                                <span class="text-slate-400 block text-[9px]">≤ 1,200' AGL (NIGHT)</span>
-                                <span class="text-amber-400 font-bold">1 SM / Clear of Clouds*</span>
-                                <span class="text-[9px] text-slate-400 block">*In Airport Traffic Pattern (otherwise 3-152)</span>
-                            </div>
-                            <div>
-                                <span class="text-slate-400 block text-[9px]">>1.2k' AGL / &lt;10k' MSL (DAY)</span>
-                                <span class="text-slate-200">1 SM / 3-152</span>
-                            </div>
-                            <div>
-                                <span class="text-slate-400 block text-[9px]">>1.2k' AGL / &lt;10k' MSL (NIGHT)</span>
-                                <span class="text-slate-200">3 SM / 3-152</span>
-                            </div>
-                        </div>
+                
+                <!-- Card Content Wrapper (Quiz target) -->
+                <div class="relative flex-1 flex flex-col justify-between">
+                    <!-- Quiz Active Overlay (Targeted blur) -->
+                    <div onclick="revealCard('class-g-card', event)" class="quiz-overlay absolute inset-0 bg-slate-900/98 flex flex-col items-center justify-center z-30 transition-all duration-300 rounded-lg">
+                        <span class="text-amber-500 text-xl mb-1.5 animate-bounce">❓</span>
+                        <span class="text-[10px] font-bold text-slate-300 font-mono tracking-widest uppercase">TAP TO REVEAL</span>
                     </div>
 
-                    <!-- Expandable Drawer -->
-                    <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-g-card">
-                        <div class="min-h-0">
-                            <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
-                                <h5 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Class G Deep Dive:</h5>
-                                <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
-                                    <li><strong class="text-slate-100">The Helicopter Speed Clause:</strong> Under Part 91.155(b)(1), you can legally fly day VFR below 1,200' AGL with less than 1/2 SM visibility, PROVIDED you operate at a speed slow enough to see and avoid all obstructions and traffic.</li>
-                                    <li><strong class="text-slate-100">Night Exemption:</strong> To use the relaxed "1 SM and Clear of Clouds" rule at night, you must stay within 1/2 mile of the runway or helipad in the airport traffic pattern. Outside that pattern, it immediately defaults to standard night rules (3-152).</li>
-                                </ul>
-                                <button onclick="toggleCardDeepDive('class-g-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
-                                    Close <span class="text-emerald-400 font-bold">✕</span>
-                                </button>
+                    <div>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Dimensions</span> <strong class="text-slate-200">Surface up to overlying controlled airspace (Class E)</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">ATC Entry Requirement</span> <strong class="text-slate-200">Uncontrolled Airspace (No ATC contact required)</strong></li>
+                            <li class="flex flex-col"><span class="text-xs text-slate-400 font-semibold uppercase">Required Equipment</span> <strong class="text-slate-200">No specific VFR requirements</strong></li>
+                            <li class="flex flex-col">
+                                <span class="text-xs text-slate-400 font-semibold uppercase">Special Helicopter Exception</span> 
+                                <span class="text-[11px] text-slate-300 mt-1 leading-relaxed bg-emerald-950/20 p-2 rounded border border-emerald-900/30">
+                                    <strong class="text-emerald-400">14 CFR 91.155(b)(1):</strong> Helicopters may operate at less than 1/2 SM visibility if flying at a speed that allows adequate opportunity to see and avoid traffic or obstructions.
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mt-6">
+                        <!-- Helicopter G Limits Checklist -->
+                        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800 space-y-2 text-[11px]">
+                            <span class="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">Helicopter Weather Minimums Grid</span>
+                            <div class="grid grid-cols-2 gap-2 font-mono text-slate-300">
+                                <div class="border-b border-slate-800/80 pb-1">
+                                    <span class="text-slate-400 block text-[9px]">≤ 1,200' AGL (DAY)</span>
+                                    <span class="text-emerald-400 font-bold">1/2 SM / Clear of Clouds</span>
+                                </div>
+                                <div class="border-b border-slate-800/80 pb-1">
+                                    <span class="text-slate-400 block text-[9px]">≤ 1,200' AGL (NIGHT)</span>
+                                    <span class="text-amber-400 font-bold">1 SM / Clear of Clouds*</span>
+                                    <span class="text-[9px] text-slate-400 block">*In Airport Traffic Pattern (otherwise 3-152)</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block text-[9px]">>1.2k' AGL / &lt;10k' MSL (DAY)</span>
+                                    <span class="text-slate-200">1 SM / 3-152</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block text-[9px]">>1.2k' AGL / &lt;10k' MSL (NIGHT)</span>
+                                    <span class="text-slate-200">3 SM / 3-152</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Action Button Trigger -->
-                    <button class="w-full mt-4 py-2 px-3 bg-emerald-950/25 hover:bg-emerald-900/35 border border-emerald-900/40 text-emerald-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
-                        <span id="label-class-g-card">View Deep Dive</span>
-                        <span class="transform transition-transform duration-300" id="chevron-class-g-card">▼</span>
-                    </button>
+                        <!-- Expandable Drawer -->
+                        <div class="grid grid-rows-[0fr] transition-all duration-300 ease-in-out overflow-hidden" id="deepdive-drawer-class-g-card">
+                            <div class="min-h-0">
+                                <div class="mt-4 pt-4 border-t border-slate-800/80 space-y-3">
+                                    <h5 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Class G Deep Dive:</h5>
+                                    <ul class="list-disc pl-4 text-xs text-slate-300 space-y-2">
+                                        <li><strong class="text-slate-100">The Helicopter Speed Clause:</strong> Under Part 91.155(b)(1), you can legally fly day VFR below 1,200' AGL with less than 1/2 SM visibility, PROVIDED you operate at a speed slow enough to see and avoid all obstructions and traffic.</li>
+                                        <li><strong class="text-slate-100">Night Exemption:</strong> To use the relaxed "1 SM and Clear of Clouds" rule at night, you must stay within 1/2 mile of the runway or helipad in the airport traffic pattern. Outside that pattern, it immediately defaults to standard night rules (3-152).</li>
+                                    </ul>
+                                    <button onclick="toggleCardDeepDive('class-g-card', event)" class="mt-2 text-xs bg-slate-800 hover:bg-slate-750 text-slate-200 px-2.5 py-1 rounded border border-slate-700 font-semibold flex items-center gap-1">
+                                        Close <span class="text-emerald-400 font-bold">✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button Trigger -->
+                        <button class="w-full mt-4 py-2 px-3 bg-emerald-950/25 hover:bg-emerald-900/35 border border-emerald-900/40 text-emerald-400 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors pointer-events-none">
+                            <span id="label-class-g-card">View Deep Dive</span>
+                            <span class="transform transition-transform duration-300" id="chevron-class-g-card">▼</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -775,6 +860,44 @@
                 </div>
             </div>
 
+            <!-- ACTIVE RECALL QUIZ MODE (Col: 6) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl lg:col-span-6 flex flex-col justify-between relative overflow-hidden group">
+                <!-- Graphical background sweep -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-amber-500/5 via-slate-900/10 to-transparent opacity-40 pointer-events-none"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                            <svg class="w-4 h-4 text-amber-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                            </svg>
+                            Active Recall Quiz Mode
+                        </h3>
+                        <span id="quiz-status-pill" class="text-[10px] bg-slate-950 border border-slate-800 text-slate-400 font-mono font-bold px-2.5 py-0.5 rounded uppercase tracking-wider transition-colors duration-300">
+                            Quiz: <span id="quiz-status-text" class="text-slate-500">OFF</span>
+                        </span>
+                    </div>
+                    
+                    <p class="text-sm text-slate-300 leading-relaxed mb-6 relative z-10">
+                        Challenge your memory for checkride prep! Enabling Quiz Mode blurs and hides the parameters of all airspace classes until you tap them.
+                    </p>
+                </div>
+                
+                <div class="space-y-4 relative z-10">
+                    <!-- Toggle switch button -->
+                    <button id="quiz-toggle-btn" onclick="toggleQuizMode()" class="w-full flex items-center justify-between bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl p-3.5 transition-all duration-300 cursor-pointer">
+                        <span class="text-xs font-bold font-mono tracking-wide text-slate-200" id="quiz-btn-label">ENABLE QUIZ MODE</span>
+                        <!-- Switch UI -->
+                        <div class="w-12 h-6 bg-slate-950 rounded-full p-1 transition-colors duration-300 relative border border-slate-800">
+                            <div id="quiz-toggle-indicator" class="w-4 h-4 bg-slate-400 rounded-full transition-transform duration-300 translate-x-0"></div>
+                        </div>
+                    </button>
+                    
+                    <p class="text-[11px] text-slate-500 font-mono italic leading-normal">
+                        Hides all regulatory text. Tap any airspace block to reveal the answers and test your memory.
+                    </p>
+                </div>
+            </div>
+
             <!-- SPECIAL USE AIRSPACE (Col: 6) -->
             <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 shadow-xl lg:col-span-6 flex flex-col justify-between opacity-80 hover:opacity-100 hover:border-slate-700/80 transition duration-300 relative overflow-hidden group">
                 <!-- Graphical sweep gradient decoration -->
@@ -849,43 +972,6 @@
                 </div>
             </div>
 
-            <!-- ACTIVE RECALL QUIZ MODE (Col: 6) -->
-            <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 shadow-xl lg:col-span-6 flex flex-col justify-between opacity-80 hover:opacity-100 hover:border-slate-700/80 transition duration-300 relative overflow-hidden group">
-                <!-- Graphical sweep gradient decoration -->
-                <div class="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-900/10 to-transparent opacity-40 pointer-events-none"></div>
-                <div>
-                    <div class="flex items-center justify-between mb-4 relative z-10">
-                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                            <svg class="w-4 h-4 text-amber-500/75" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                            </svg>
-                            Active Recall Quiz Mode
-                        </h3>
-                        <!-- Radar Pulse Badge -->
-                        <span class="flex h-6 items-center">
-                            <span class="relative flex h-2 w-2 mr-1.5">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                            </span>
-                            <span class="text-[10px] bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono font-bold px-2.5 py-0.5 rounded uppercase tracking-wider animate-pulse">
-                                Coming Soon
-                            </span>
-                        </span>
-                    </div>
-                    
-                    <p class="text-sm text-slate-400 leading-relaxed mb-4 relative z-10">
-                        A dynamic testing interface that will hide reference text and challenge your knowledge of airspace limits, equipment rules, and VFR minimums for checkride preparation.
-                    </p>
-                </div>
-                
-                <div class="border-t border-slate-800/60 pt-4 mt-4 relative z-10">
-                    <div class="flex items-center gap-2 text-xs text-slate-500 font-mono">
-                        <span class="w-1.5 h-1.5 rounded-full bg-slate-700 animate-pulse"></span>
-                        <span>Adaptive question engine & scenario database in progress...</span>
-                    </div>
-                </div>
-            </div>
-
         </section>
 
         <!-- ABOUT THIS PROJECT -->
@@ -927,6 +1013,75 @@
 
     <!-- JAVASCRIPT FOR INTERACTIVITY -->
     <script>
+        // Global State Variables
+        let isQuizMode = false;
+
+        /**
+         * Toggles Active Recall Quiz Mode ON or OFF
+         */
+        function toggleQuizMode() {
+            isQuizMode = !isQuizMode;
+            const body = document.body;
+            const toggleBtn = document.getElementById('quiz-toggle-btn');
+            const toggleIndicator = document.getElementById('quiz-toggle-indicator');
+            const statusText = document.getElementById('quiz-status-text');
+            const statusPill = document.getElementById('quiz-status-pill');
+            const btnLabel = document.getElementById('quiz-btn-label');
+
+            if (isQuizMode) {
+                body.classList.add('quiz-mode-active');
+                
+                // Toggle Button styling updates
+                toggleBtn.classList.remove('bg-slate-800', 'border-slate-700', 'hover:bg-slate-750');
+                toggleBtn.classList.add('bg-amber-500/10', 'border-amber-500/50', 'hover:bg-amber-500/20');
+                
+                // Indicator sliding shift
+                toggleIndicator.classList.remove('translate-x-0', 'bg-slate-400');
+                toggleIndicator.classList.add('translate-x-6', 'bg-amber-500');
+                
+                // Text status indicators
+                statusText.innerHTML = '<span class="text-amber-500">ON</span>';
+                statusPill.classList.remove('border-slate-800', 'text-slate-400');
+                statusPill.classList.add('border-amber-500/30', 'text-amber-400');
+                btnLabel.textContent = "DISABLE QUIZ MODE";
+            } else {
+                body.classList.remove('quiz-mode-active');
+                
+                // Reset all revealed cards back to default blurred states
+                const cards = document.querySelectorAll('[id$="-card"]');
+                cards.forEach(card => card.classList.remove('quiz-revealed'));
+
+                // Toggle Button styling reset
+                toggleBtn.classList.add('bg-slate-800', 'border-slate-700', 'hover:bg-slate-750');
+                toggleBtn.classList.remove('bg-amber-500/10', 'border-amber-500/50', 'hover:bg-amber-500/20');
+                
+                // Indicator reset
+                toggleIndicator.classList.add('translate-x-0', 'bg-slate-400');
+                toggleIndicator.classList.remove('translate-x-6', 'bg-amber-500');
+                
+                // Text status reset
+                statusText.innerHTML = '<span class="text-slate-500">OFF</span>';
+                statusPill.classList.add('border-slate-800', 'text-slate-400');
+                statusPill.classList.remove('border-amber-500/30', 'text-amber-400');
+                btnLabel.textContent = "ENABLE QUIZ MODE";
+            }
+        }
+
+        /**
+         * Explicitly reveals the blurred section of a specific card
+         * @param {string} cardId - The target card container's element ID
+         * @param {Event} event - The click event
+         */
+        function revealCard(cardId, event) {
+            if (event) {
+                event.stopPropagation(); // Block from opening slide drawers on the first click
+            }
+            const card = document.getElementById(cardId);
+            if (card) {
+                card.classList.add('quiz-revealed');
+            }
+        }
+
         /**
          * Toggles the visibility of the nav coming soon dropdowns
          * @param {string} dropdownId - The HTML element ID of the dropdown
@@ -973,6 +1128,15 @@
             // Prevent drawer action button/close triggers from infinite event bubbling
             if (event) {
                 event.stopPropagation();
+            }
+
+            // Interrupt normal drawer toggle if Quiz Mode is active and this card hasn't been revealed yet
+            if (isQuizMode) {
+                const card = document.getElementById(cardId);
+                if (card && !card.classList.contains('quiz-revealed')) {
+                    revealCard(cardId, event);
+                    return;
+                }
             }
 
             const drawer = document.getElementById(`deepdive-drawer-${cardId}`);
@@ -1025,7 +1189,7 @@
             // Scroll card into view smoothly
             card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Automatically open its drawer (simulate click)
+            // Automatically open its drawer
             toggleCardDeepDive(cardId);
 
             // Add a brief flashing visual indicator
